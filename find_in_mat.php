@@ -1,5 +1,5 @@
 <?php
-
+//https://tproger.ru/problems/algorithm-to-search-an-element-in-a-sorted-array/
 // Поиск в матрице
 
 function find($data, $num) {
