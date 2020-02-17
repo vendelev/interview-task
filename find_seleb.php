@@ -2,11 +2,11 @@
 // Знаменитость и фанаты
 // Найти пользователя (знаменитость), который не имеет связь ни с одним другим пользователем, а все остальные (фанаты) имеют связь с ним
 
-//ini_set("memory_limit", "1000M");
+ini_set("memory_limit", "1000M");
 
 //$data = [1, 2, 3, 4, 5];
 $data = [];
-for ($ii = 1; $ii < 4000; $ii++) {
+for ($ii = 1; $ii < 15000; $ii++) {
     $data[] = $ii;
 }
 print 'Всего пользователей: '. count($data) ." \n";
@@ -21,13 +21,13 @@ print 'Всего пользователей: '. count($data) ." \n";
 //    '5,3' => true,
 //];
 $ukNow = [];
-for ($ii = 1; $ii < 4000; $ii++) {
-    if ($ii == 3820) {
+for ($ii = 1; $ii < 15000; $ii++) {
+    if ($ii == 7820) {
         continue;
     }
-    $ukNow[$ii .',3820'] = true;
-    for ($kk = $ii; $kk < 4000; $kk+=39) {
-        if ($kk == $ii || $kk == 3820) {
+    $ukNow[$ii .',7820'] = true;
+    for ($kk = $ii; $kk < 15000; $kk+=539) {
+        if ($kk == $ii || $kk == 7820) {
             continue;
         }
         $ukNow[$ii . ',' . $kk] = true;
@@ -38,7 +38,7 @@ for ($ii = 1; $ii < 4000; $ii++) {
 }
 print 'Всего связей: '. count($ukNow) ." \n";
 
-function know($id1, $id2): bool
+function knows($id1, $id2): bool
 {
     return (bool)$GLOBALS['ukNow'][ $id1 .','. $id2];
 }
@@ -65,14 +65,16 @@ function find_sel($users): int
                 $cache[$users[$kk]] = ['out' => 0, 'in' => 0, 'skip' => false];
             }
 
-            if (know($users[$ii], $users[$kk])) {
-                $cache[$users[$ii]]['out']++;
-                $cache[$users[$kk]]['in']++;
-            }
-
-            if (/*($cache[$users[$kk]]['skip'] || $kk >=$ii) && */know($users[$kk], $users[$ii])) {
+            if (/*($cache[$users[$kk]]['skip'] || $kk >=$ii) && */knows($users[$kk], $users[$ii])) {
                 $cache[$users[$kk]]['out']++;
                 $cache[$users[$ii]]['in']++;
+            }
+
+            if (knows($users[$ii], $users[$kk])) {
+                $cache[$users[$ii]]['out']++;
+                $cache[$users[$kk]]['in']++;
+
+                break;
             }
         }
 
