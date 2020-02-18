@@ -45,47 +45,26 @@ function knows($id1, $id2): bool
 
 function find_sel($users): int
 {
-    $sub = 0;
-    $cache = [];
     $cnt = count($users) - 1;
-    for ($ii=0; $ii <= $cnt; $ii++) {
-        if (!array_key_exists($users[$ii], $cache)) {
-            $cache[$users[$ii]] = ['out' => 0, 'in' => 0, 'skip' => false];
-        }
+	$visited = [];
+	$tmp = 0;
 
-        if ($cache[$users[$ii]]['out'] > 0) {
-            $cache[$users[$ii]]['skip'] = true;
-            continue;
-        }
+	do {
+		$next = $tmp;
+		$visited[$next] = 1;
 
-        $sub++;
+		for ($ii=0; $ii <= $cnt; $ii++) {
+			if (!empty($visited[$ii])) {
+				continue;
+			}
+			if (knows($users[$next], $users[$ii]) && !knows($users[$ii], $users[$next])) {
+				$tmp = $ii;
+				break;
+			}
+		}
+	} while ($next !== $tmp);
 
-        for (/*$kk=0; */ $kk = $ii; $kk <= $cnt; $kk++) {
-            if (!array_key_exists($users[$kk], $cache)) {
-                $cache[$users[$kk]] = ['out' => 0, 'in' => 0, 'skip' => false];
-            }
-
-            if (/*($cache[$users[$kk]]['skip'] || $kk >=$ii) && */knows($users[$kk], $users[$ii])) {
-                $cache[$users[$kk]]['out']++;
-                $cache[$users[$ii]]['in']++;
-            }
-
-            if (knows($users[$ii], $users[$kk])) {
-                $cache[$users[$ii]]['out']++;
-                $cache[$users[$kk]]['in']++;
-
-                break;
-            }
-        }
-
-        if ($cache[$users[$ii]]['out'] == 0/* && $cache[$users[$ii]]['in'] == $cnt*/) {
-            print "Кол-во подциклов: $sub \n";
-            print 'Кол-во в кеше: '. count($cache) ."\n";
-            return $users[$ii];
-        }
-    }
-
-    return 0;
+	return $users[$next];
 }
 
 $tt = microtime(true);
